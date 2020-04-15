@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from  flask  import  Flask , request
 from  flask_restful  import  Resource,  Api
 
@@ -29,3 +30,18 @@ api . add_resource ( Item,  '/item/<string:name>')
 api . add_resource (ItemList,  '/items')
 
 app. run (port=5000,  debug=True)
+=======
+from  flask import  Flask 
+from  flask_restful  import  Resource,  Api
+
+app = Flask(__name__)
+api = Api (app)
+
+class  Student (Resource):
+    def  get (self,  Tianhua):
+             return  {'student' : Tianhua }
+
+api . add_resource ( Student ,  '/student/<string:Tianhua>')
+
+app. run (port=5000)
+>>>>>>> origin/code
