@@ -1,64 +1,21 @@
-from  flask  import  Flask , request
-from  flask_restful  import  Resource,  Api , reqparse
-from  flask_jwt  import JWT,   jwt_required ,   current_identity
+from  flask  import  Flask  #  three basic  required  environment  package including  flask, API interface and jwt token
+from  flask_restful  import  Api
+from  flask_jwt import JWT
 
-from  security  import   authenticate,  identity
+from  security  import   authenticate,  identity  #  from  our created  security  file import  authenticate and identity  functions
+from  user  import  UserRegister  #  import our created userregister resources
+from  item  import  Item  # import our created items resources
 
+app  =   Flask (__name__)  # create our application
+app. secret_key  =   'tianhua' # set secret key to prevent from some users modifying contents
+api =  Api (app)
 
-app  =   Flask(__name__)
-app.secret_key = 'Tianhua'
-api   =  Api(app)
+jwt  =  JWT (app,  authenticate,  identity)
 
+api . add_resource (Item, '/item/<string:name>') # pass multiple URLs to  the add_resource method on API object and each one will be routed to Item resource
+api.  add_resource  (UserRegister, '/register')  #set endpoints with userregister resource in our user file
 
-items  =  [ ]
-
-class  Item(Resource) : 
-    def  get (self,   name) :
-        for  item in  items : 
-            if  item[ 'name' ]  ==  name :
-                        return  item
-                        return {'item':  None}, 404
-
-    def  post  (self  ,  name): 
-                        data = request. get_json( )
-                        item = {'name': name, 'price' : data ['price']}
-                        items.append(item)
-                        return  item,        201  
+#here we cannot use ItemList resources and if we set them in item file, it will conflict with our table_name
 
 
-    def  put  ( self,    name ):
-              parser  =  reqparse .  RequestParser (  )
-              parser . add_argument  ( ' price'  ,
-                    type  =  float  ,
-                    required  =  True ,
-                    help  =  'This  field  cannot  be  left  blank!'
-               )
-              data  =  parser . parse_args (  )
-              print ( data['another']) ;
-              item  =  next(filter (lambda x:    x['name']  ==   name,  items ),   None)
-              if   item  is   None : 
-                    item  =  {'name':  name,   'price':   data['price']}
-                    items . append(item)
-              else :
-                    item . update (data)
-              return  item
-
-class ItemList(Resource) :
-    def  get(self):
-                        return{'items' : items}
-
-jwt  =  JWT (app,   authenticate,   identity)
-
-@app .route ('/auth')
-@jwt_required( )
-
-
-def  auth ( ):
-           return   '%s'   %    current_identity
-
-if   __name__  == '__main__' : 
-
-          api . add_resource ( Item,  '/item/<string:name>')
-api . add_resource (ItemList,  '/items')
-
-app. run (port=5000,  debug=True)
+app. run (port=5000,  debug=True)   
